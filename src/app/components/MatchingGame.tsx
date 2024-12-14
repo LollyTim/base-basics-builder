@@ -81,7 +81,7 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
                 </div>
                 <div className="flex flex-col items-center">
                     <h4 className="mb-2 text-lg font-semibold text-center text-white">Descriptions</h4>
-                    {shuffledDescriptions.map((desc, index) => {
+                    {shuffledDescriptions.map((desc) => {
                         const matchedTerm = Object.keys(matches).find(key => matches[key] === desc);
                         const termIndex = matchedTerm ? shuffledTerms.findIndex(t => t.term === matchedTerm) : -1;
                         const isCorrect = matchedTerm !== undefined;

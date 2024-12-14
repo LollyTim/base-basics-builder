@@ -29,7 +29,7 @@ const SmartContractGame = ({ onComplete }: { onComplete: () => void }) => {
             transition={{ duration: 0.5 }}
         >
             <h3 className="text-lg font-semibold text-white mb-2">Interactive Game: Write the Smart Contract</h3>
-            <p className="text-sm text-gray-300 mb-4">Try to write a smart contract that can store a number and allow users to retrieve it. Here's what you need to do:</p>
+            <p className="text-sm text-gray-300 mb-4">Try to write a smart contract that can store a number and allow users to retrieve it. Here&apos;s what you need to do:</p>
             <ul className="text-sm text-gray-400 list-disc ml-5 mb-4">
                 <li>Define a contract named <code>SimpleStorage</code>.</li>
                 <li>Have a public <code>uint256</code> variable named <code>number</code>.</li>
