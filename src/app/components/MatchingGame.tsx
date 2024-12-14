@@ -137,9 +137,11 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
                                 {desc}
                                 {isCorrect && <span className="ml-2">✓</span>}
                             </motion.div>
+
                         );
                     })}
                 </div>
+                {score}
             </div>
         </motion.div>
     );
