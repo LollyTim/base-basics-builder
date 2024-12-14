@@ -1,101 +1,198 @@
-import Image from "next/image";
+"use client"
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import BaseDiagram from './components/BaseDiagram'
+import SmartContractsOnBase from './components/SmartContractsOnBase'
+import Confetti from 'react-confetti'
+import MatchingGame from './components/MatchingGame'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [currentModule, setCurrentModule] = useState<number>(0);
+  const [showGame, setShowGame] = useState<boolean>(false);
+  const [completed, setCompleted] = useState<boolean>(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  const modules = [
+    {
+      component: (
+        <div className="max-w-4xl mx-auto px-4">
+          <h1 className="text-4xl font-bold text-center mb-6 text-shadow-lg">Understanding Base - A Layer 2 Solution</h1>
+
+          <section className="mb-8 p-6 rounded-lg shadow-lg bg-opacity-50 bg-indigo-800">
+            <h2 className="text-2xl font-semibold mb-2">What is Base?</h2>
+            <p>Base is like a special, fast lane built on top of Ethereum. It's designed to make things quicker and cheaper while keeping everything safe.</p>
+          </section>
+
+          <section className="mb-8 p-6 rounded-lg shadow-lg bg-opacity-50 bg-indigo-800">
+            <h2 className="text-2xl font-semibold mb-2">How Does Base Work?</h2>
+            <p>Transactions happen off the main Ethereum road (Layer 1) on Base's own path (Layer 2). Base uses Optimistic Rollups:</p>
+            <ul className="list-disc pl-5">
+              <li>You make a transaction on Base.</li>
+              <li>Base bundles up lots of transactions together.</li>
+              <li>Only a summary of these bundled transactions is sent back to Ethereum for safety checks.</li>
+              <li>If no one complains (optimistically assumes everything is okay), the transactions are confirmed.</li>
+            </ul>
+          </section>
+
+          <section className="mb-8 p-6 rounded-lg shadow-lg bg-opacity-50 bg-indigo-800">
+            <h2 className="text-2xl font-semibold mb-2">Why Use Base?</h2>
+            <ul className="list-disc pl-5">
+              <li>Speed: Transactions are faster because they're processed outside the main Ethereum traffic.</li>
+              <li>Cost: It's cheaper to move on Base than on the crowded Ethereum highway.</li>
+              <li>Security: Even though you're on a different road, Base still uses Ethereum's security guards to make sure everything is safe.</li>
+            </ul>
+          </section>
+
+          <motion.div
+            className="mb-8 p-6 rounded-lg shadow-lg bg-opacity-50 bg-indigo-800"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <BaseDiagram />
+          </motion.div>
+
+          <button
+            onClick={() => setShowGame(!showGame)}
+            className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-blue-500 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-full mb-4 transition-all duration-300 shadow-lg"
           >
-            Read our docs
-          </a>
+            {showGame ? 'Hide Game' : 'Show Matching Game'}
+          </button>
+
+          {showGame && (
+            <AnimatePresence>
+              <motion.div
+                key="matchingGame"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <MatchingGame onComplete={() => {
+                  setCompleted(true);
+                  setShowGame(false); // Hide the game on completion to prevent blocking clicks
+                }} />
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
+      ),
+      title: 'Understanding Base'
+    },
+    { component: <SmartContractsOnBase onComplete={() => { setCompleted(true); scrollToTop(); }} />, title: 'Smart Contracts on Base' }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-500 to-indigo-900 text-white flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-indigo-900 bg-opacity-75 border-r border-purple-500">
+        <nav className="p-4">
+          <h1 className="text-2xl font-bold text-center mb-4 text-shadow-lg">Base Learning Modules</h1>
+          <ul>
+            {modules.map((module, index) => (
+              <li key={index} className="mb-2">
+                <button
+                  onClick={() => setCurrentModule(index)}
+                  className={`w-full text-left px-4 py-2 rounded-lg ${currentModule === index ? 'bg-blue-500' : 'bg-transparent hover:bg-indigo-700'} text-white transition-colors duration-300`}
+                >
+                  {module.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 overflow-y-auto">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentModule}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+          >
+            {modules[currentModule].component}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Success Modal */}
+        {completed &&
+          <div className="fixed z-50 inset-0 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div className="absolute inset-0  opacity-75"></div>
+              </div>
+              <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+
+              <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                      <svg className="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
+                        Success!
+                      </h3>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          You've completed the module. Great job!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button onClick={() => setCompleted(false)} type="button" className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        {/* Confetti */}
+        {completed &&
+          <Confetti
+            width={windowSize.width}
+            height={windowSize.height}
+            numberOfPieces={200}
+            gravity={0.5}
+            tweenDuration={1000}
+
+          />
+        }
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }
