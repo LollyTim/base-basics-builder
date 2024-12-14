@@ -61,9 +61,9 @@ export default function Home() {
 
           <section className="mb-8 p-4 md:p-6 rounded-lg shadow-lg bg-opacity-50 bg-indigo-800">
             <h2 className="text-xl md:text-2xl font-semibold mb-2">Why Use Base?</h2>
+
+
             <ul className="list-disc pl-5">
-
-
               <li>Speed: Transactions are faster because they&#39;re processed outside the main Ethereum traffic.</li>
               <li>Cost: It&#39;s cheaper to move on Base than on the crowded Ethereum highway.</li>
               <li>Security: Even though you're on a different road, Base still uses Ethereum&#39;s security guards to make sure everything is safe.</li>
